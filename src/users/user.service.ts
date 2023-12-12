@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { ILogin, IUser } from './user.interface';
 import { User } from './user.schema';
 import { PaginateModel } from 'mongoose';
@@ -6,6 +6,7 @@ import { InjectModel } from '@nestjs/mongoose';
 
 import * as bcrypt from 'bcrypt';
 import { filterRequest, generateToken, optionsRequest } from 'src/helpers/units';
+import { PlayloadJwt } from 'src/auth/auth.interface';
 
 @Injectable()
 export class UserService {
@@ -31,14 +32,27 @@ export class UserService {
   }
 
   async loginUser(user: ILogin) {
-    const userLogin = await this.userModel.findOne({username: user.username})
+    const userLogin = await this.userModel.findOne({username: user.username, is_deleted:false})
     if(!userLogin){
-      throw new HttpException('Tai khoan hoac mat khau khong chinh xac', HttpStatus.BAD_REQUEST);
+      throw new BadRequestException('Tai khoan hoac mat khau khong chinh xac');
     }
     if(!this.comparePassword(user.password,userLogin.password)){
-      throw new HttpException('Tai khoan hoac mat khau khong chinh xac', HttpStatus.BAD_REQUEST);
+      throw new BadRequestException('Tai khoan hoac mat khau khong chinh xac');
     }
-    // const token = generateToken()
+    console.log("userLogin ", userLogin)
+    return await this.updateToken(userLogin._id.toString() ,user.username)
+  }
+
+  async updateToken(userId: string, username: string){
+    let dateToken: PlayloadJwt={
+      user_id: userId,
+      username: username
+    }
+    const token = await generateToken(dateToken, process.env.TOKEN_SECRET, process.env.TIME_EXPRI_TOKEN)
+    return {
+      ...dateToken,
+      token
+    }
   }
 
   async deleteUser(id: string) {

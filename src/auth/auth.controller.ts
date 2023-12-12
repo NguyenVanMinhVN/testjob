@@ -10,9 +10,4 @@ export class AuthController {
 
     }
 
-    @Post('login')
-    @ApiOperation({summary: 'API login'})
-    async login(@Body() body: LoginDto){
-        return await this.authService;
-    }
 }

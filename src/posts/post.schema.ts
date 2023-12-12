@@ -1,11 +1,14 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { IPosts } from "./post.interface";
 import * as mongoseePaginate from 'mongoose-paginate-v2'
+import { Document } from "mongoose";
 
 @Schema({timestamps:{createdAt: 'created_at', updatedAt: 'updated_at'}})
 export class Posts extends Document{
     @Prop({type: String})
     id: string;
+    @Prop({type: [String]})
+    tag: string[];
     @Prop({type: String})
     author: string;
     @Prop({type: String})
@@ -14,12 +17,14 @@ export class Posts extends Document{
     subtiltle: string;
     @Prop({type: String})
     content: string;
+    @Prop({type: Boolean, default: false})
+    is_deleted: boolean;
 
     view: (full?: boolean) => IPosts
 }
 
-export const UserSchemaPost = SchemaFactory.createForClass(Posts);
-UserSchemaPost.methods.view = function (full?: boolean): IPosts{
+export const PostSchema = SchemaFactory.createForClass(Posts);
+PostSchema.methods.view = function (full?: boolean): IPosts{
     const view: IPosts = {
         id : this._id,
         author: this.author,
@@ -30,4 +35,4 @@ UserSchemaPost.methods.view = function (full?: boolean): IPosts{
     return full ? {...view} :view;
 }
 
-UserSchemaPost.plugin(mongoseePaginate);
+PostSchema.plugin(mongoseePaginate);
