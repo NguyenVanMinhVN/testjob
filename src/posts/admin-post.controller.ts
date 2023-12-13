@@ -5,8 +5,8 @@ import { Auth } from 'src/decorators/role.decorator';
 import { ApiBearerAuth } from '@nestjs/swagger';
 
 @Controller('admin/post')
-@Auth()
 @ApiBearerAuth('Authorization')
+@Auth()
 export class AdminPostController {
     constructor(private readonly postService: PostsService){
 
