@@ -23,7 +23,7 @@ export class PostsController {
     }
 
     @Get('list')
-    @Auth()
+    // @Auth()
     async findAllPost(@Query() query: PostQueryDto){
         console.log("findAllPost");
         return this.postService.fillAllPost(query);

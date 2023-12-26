@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Inject, Param, ParseIntPipe, Post, Put, Query, UsePipes, ValidationPipe } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Inject, Param, ParseIntPipe, Post, Put, Query, Req, UsePipes, ValidationPipe } from "@nestjs/common";
 import { CreateUserDto, LoginDto, UpdateUserDto, UserQuery } from "./user.dto";
 import { UserService } from "./user.service";
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
@@ -20,6 +20,12 @@ export class UserController{
 
         return this.userService.loginUser(body)
     }
+    @Auth()
+    @Get('me')
+    async myInfomation(@Req() req: {user: {user_id: string}}){
+        return this.userService.userInfo(req.user.user_id);
+    }
+
     @Put(':id')
     @Auth()
 

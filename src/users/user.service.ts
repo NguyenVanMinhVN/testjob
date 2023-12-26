@@ -31,6 +31,11 @@ export class UserService {
     return (await this.userModel.create(user)).view();
   }
 
+  async userInfo(id: string){
+    const user= await this.userModel.findById(id);
+    if(!user) throw new NotFoundException("Khong tim thay user");
+    return user.view();
+  }
   async loginUser(user: ILogin) {
     const userLogin = await this.userModel.findOne({username: user.username, is_deleted:false})
     if(!userLogin){
